@@ -3,38 +3,118 @@ package com.example.lab7;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    TicTacToe game;
+    MediaPlayer click, gameover, music;
+    SharedPreferences settings;
 
+    DrawView drawView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(new DrawView(this));
+
+        game = new TicTacToe();
+        click = MediaPlayer.create(this, R.raw.click);
+        gameover = MediaPlayer.create(this, R.raw.gameover);
+        music = MediaPlayer.create(this, R.raw.background);
+        music.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                music.start();
+            }
+        });
+        settings = getSharedPreferences("Settings", MODE_PRIVATE);
+
+        drawView = new DrawView(this, game, click ,gameover, music, settings);
+
+        setContentView(drawView);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.setttings_menu, menu);
+        MenuItem music = menu.findItem(R.id.musicCheck);
+        MenuItem sounds = menu.findItem(R.id.soundsCheck);
+        music.setChecked(settings.getBoolean("Music", true));
+        sounds.setChecked(settings.getBoolean("Sounds", true));
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences.Editor editor = settings.edit();
+        switch(item.getItemId()) {
+            case R.id.musicCheck:
+                item.setChecked(!item.isChecked());
+                editor.putBoolean("Music", item.isChecked());
+                editor.apply();
+
+                if (!item.isChecked()) {
+                    music.stop();
+                    try {
+                        music.prepare();
+                        music.seekTo(0);
+                    }
+                    catch (Throwable t) {
+                        Toast.makeText(this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else music.start();
+                break;
+            case R.id.soundsCheck:
+                item.setChecked(!item.isChecked());
+                editor.putBoolean("Sounds", item.isChecked());
+                editor.apply();
+                break;
+
+            case R.id.restart:
+                game.restart();
+                drawView.invalidate();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 
 class DrawView extends View {
     static int width;
     static int height;
-    int state;
-    static TicTacToe game = new TicTacToe();
     Paint pen = new Paint();
 
-    public DrawView(Context context) {
+    TicTacToe game;
+    int state;
+
+    MediaPlayer click, gameover, music;
+    SharedPreferences settings;
+
+    public DrawView(Context context, TicTacToe game, MediaPlayer click, MediaPlayer gameover, MediaPlayer music, SharedPreferences sharedPreferences) {
         super(context);
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
         height = displayMetrics.heightPixels;
+
+        this.game = game;
+        this.click = click;
+        this.gameover = gameover;
+        this.music = music;
+        settings = sharedPreferences;
+
+        if (settings.getBoolean("Music", true)) this.music.start();
     }
 
     @Override
@@ -64,6 +144,7 @@ class DrawView extends View {
                 break;
             case 0:
                 status = "Ничья!";
+                if (settings.getBoolean("Sounds", true)) gameover.start();
                 break;
             case 1:
                 canvas.drawLine(width / 6, 0, width / 6, width, pen);
@@ -91,7 +172,8 @@ class DrawView extends View {
                 break;
         }
 
-        if (state > -1 && state < 9) {
+        if (state > 0 && state < 9) {
+            if (settings.getBoolean("Sounds", true)) gameover.start();
             if (game.getPlayer() == 2) status = "Первый игрок победил!";
             else status = "Второй игрок победил!";
         }
@@ -111,6 +193,7 @@ class DrawView extends View {
         canvas.drawBitmap(bitmap, null, new RectF(x, y, x + width / 3, y + width / 3), pen);
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (game.isActive()) {
             float x = event.getX();
@@ -125,7 +208,10 @@ class DrawView extends View {
             else if (y >= width / 3 + 10 && y < 2 * width / 3 + 10) column = 1;
             else if (y >= 2 * width / 3 + 20) column = 2;
 
+            if (row == -1 || column == -1) return true;
+
             if (game.get(row, column) == 0) {
+                if (settings.getBoolean("Sounds", true)) click.start();
                 game.set(row, column);
                 game.changePlayer();
                 invalidate();

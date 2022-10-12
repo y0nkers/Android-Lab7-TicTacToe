@@ -48,4 +48,12 @@ public class TicTacToe {
 
         return 0; // Draw
     }
+
+    public void restart() {
+        player = 1;
+        for (int i = 0; i < 3; ++i)
+            for (int j = 0; j < 3; ++j)
+                field[i][j] = 0;
+        isGameActive = true;
+    }
 }
