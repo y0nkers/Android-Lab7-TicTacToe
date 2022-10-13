@@ -122,10 +122,12 @@ class DrawView extends View {
         pen.setColor(Color.GREEN);
         pen.setStrokeWidth(10);
 
+        // Horizontal lines
         canvas.drawLine(0, width / 3, width, width / 3, pen);
         canvas.drawLine(0, 2 * width / 3, width, 2 * width / 3, pen);
-        canvas.drawLine(width / 3, 50, width / 3, width, pen);
-        canvas.drawLine(2 * width / 3, 50, 2 * width / 3, width, pen);
+        // Vertical lines
+        canvas.drawLine(width / 3, 0, width / 3, width, pen);
+        canvas.drawLine(2 * width / 3, 0, 2 * width / 3, width, pen);
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -206,7 +208,7 @@ class DrawView extends View {
 
             if (y >= 0 && y <= width / 3) column = 0;
             else if (y >= width / 3 + 10 && y < 2 * width / 3 + 10) column = 1;
-            else if (y >= 2 * width / 3 + 20) column = 2;
+            else if (y >= 2 * width / 3 + 20 && y < width) column = 2;
 
             if (row == -1 || column == -1) return true;
 
