@@ -123,11 +123,11 @@ class DrawView extends View {
         pen.setStrokeWidth(10);
 
         // Horizontal lines
-        canvas.drawLine(0, width / 3, width, width / 3, pen);
-        canvas.drawLine(0, 2 * width / 3, width, 2 * width / 3, pen);
+        canvas.drawLine(0, width / 3f, width, width / 3f, pen);
+        canvas.drawLine(0, 2 * width / 3f, width, 2 * width / 3f, pen);
         // Vertical lines
-        canvas.drawLine(width / 3, 0, width / 3, width, pen);
-        canvas.drawLine(2 * width / 3, 0, 2 * width / 3, width, pen);
+        canvas.drawLine(width / 3f, 0, width / 3f, width, pen);
+        canvas.drawLine(2 * width / 3f, 0, 2 * width / 3f, width, pen);
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -149,22 +149,22 @@ class DrawView extends View {
                 if (settings.getBoolean("Sounds", true)) gameover.start();
                 break;
             case 1:
-                canvas.drawLine(width / 6, 0, width / 6, width, pen);
+                canvas.drawLine(width / 6f, 0, width / 6f, width, pen);
                 break;
             case 2:
-                canvas.drawLine(width / 2, 0, width / 2, width, pen);
+                canvas.drawLine(width / 2f, 0, width / 2f, width, pen);
                 break;
             case 3:
-                canvas.drawLine(5 * width / 6, 0, 5 * width / 6, width, pen);
+                canvas.drawLine(5 * width / 6f, 0, 5 * width / 6f, width, pen);
                 break;
             case 4:
-                canvas.drawLine(0, width / 6, width, width / 6, pen);
+                canvas.drawLine(0, width / 6f, width, width / 6f, pen);
                 break;
             case 5:
-                canvas.drawLine(0, width / 2, width, width / 2, pen);
+                canvas.drawLine(0, width / 2f, width, width / 2f, pen);
                 break;
             case 6:
-                canvas.drawLine(0, 5 * width / 6, width, 5 * width / 6, pen);
+                canvas.drawLine(0, 5 * width / 6f, width, 5 * width / 6f, pen);
                 break;
             case 7:
                 canvas.drawLine(0, 0, width, width, pen);
@@ -187,12 +187,12 @@ class DrawView extends View {
 
     public void drawX(Canvas canvas, int x, int y) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.x);
-        canvas.drawBitmap(bitmap, null, new RectF(x, y, x + width / 3, y + width / 3), pen);
+        canvas.drawBitmap(bitmap, null, new RectF(x, y, x + width / 3f, y + width / 3f), pen);
     }
 
     public void drawO(Canvas canvas, int x, int y) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.o);
-        canvas.drawBitmap(bitmap, null, new RectF(x, y, x + width / 3, y + width / 3), pen);
+        canvas.drawBitmap(bitmap, null, new RectF(x, y, x + width / 3f, y + width / 3f), pen);
     }
 
     @Override
@@ -202,13 +202,13 @@ class DrawView extends View {
             float y = event.getY();
 
             int row = -1, column = -1;
-            if (x >= 0 && x <= width / 3) row = 0;
-            else if (x >= width / 3 + 10 && x <= 2 * width / 3 + 10) row = 1;
-            else if (x >= 2 * width / 3 + 20) row = 2;
+            if (x >= 0 && x <= width / 3f) row = 0;
+            else if (x >= width / 3f + 10 && x <= 2 * width / 3f + 10) row = 1;
+            else if (x >= 2 * width / 3f + 20) row = 2;
 
-            if (y >= 0 && y <= width / 3) column = 0;
-            else if (y >= width / 3 + 10 && y < 2 * width / 3 + 10) column = 1;
-            else if (y >= 2 * width / 3 + 20 && y < width) column = 2;
+            if (y >= 0 && y <= width / 3f) column = 0;
+            else if (y >= width / 3f + 10 && y < 2 * width / 3f + 10) column = 1;
+            else if (y >= 2 * width / 3f + 20 && y < width) column = 2;
 
             if (row == -1 || column == -1) return true;
 
